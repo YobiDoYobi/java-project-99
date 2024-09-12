@@ -1,0 +1,10 @@
+# BEGIN
+spring:
+  datasource:
+    url: ${JDBC_DATABASE_URL}
+    username: ${JDBC_DATABASE_USER}
+    password: ${JDBC_DATABASE_PASSWORD}
+  config:
+    activate:
+      on-profile: stage
+# END

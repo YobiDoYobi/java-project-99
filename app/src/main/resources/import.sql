@@ -1,0 +1,1 @@
+insert into users (email,first_name,last_name,password) values ('hexlet@example.com','First','Last','qwerty')

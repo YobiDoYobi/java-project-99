@@ -11,6 +11,7 @@ spring:
     ansi:
       enabled: always
   profiles:
+    active: ${ACTIVE_PROFILE}
     default: development
 server:
   port: 9000

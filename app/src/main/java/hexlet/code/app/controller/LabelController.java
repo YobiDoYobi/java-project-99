@@ -1,15 +1,13 @@
 package hexlet.code.app.controller;
 
-
-import hexlet.code.app.dto.user.UserCreateDTO;
-import hexlet.code.app.dto.user.UserDTO;
-import hexlet.code.app.dto.user.UserUpdateDTO;
-import hexlet.code.app.service.UserService;
+import hexlet.code.app.dto.label.LabelCreateDTO;
+import hexlet.code.app.dto.label.LabelDTO;
+import hexlet.code.app.dto.label.LabelUpdateDTO;
+import hexlet.code.app.service.LabelService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,50 +15,45 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.Map;
-
 
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping("/api/labels")
 @AllArgsConstructor
-public class UserController {
-    private UserService userService;
+public class LabelController {
+    private LabelService labelService;
 
     @GetMapping(path = "")
-    public ResponseEntity<List<UserDTO>> index(@RequestParam Map<String, String> allParams) {
-        var users = userService.getAll(allParams);
+    public ResponseEntity<List<LabelDTO>> index() {
+        var labels = labelService.getAll();
         return ResponseEntity.ok()
-                .header("X-Total-Count", String.valueOf(userService.count()))
-                .body(users);
+                .header("X-Total-Count", String.valueOf(labels.size()))
+                .body(labels);
     }
 
     @GetMapping(path = "/{id}")
-    public UserDTO show(@PathVariable long id) {
-        return userService.getById(id);
+    public LabelDTO show(@PathVariable long id) {
+        return labelService.getById(id);
     }
 
     @PostMapping(path = "")
     @ResponseStatus(HttpStatus.CREATED)
-    public UserDTO create(@Valid @RequestBody UserCreateDTO userData) {
-        return userService.create(userData);
+    public LabelDTO create(@Valid @RequestBody LabelCreateDTO dto) {
+        return labelService.create(dto);
     }
 
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("@userUtils.isCurrentUser(#id)")
-    public UserDTO updateUser(@PathVariable Long id, @Valid @RequestBody UserUpdateDTO updateDTO) {
-        return userService.update(id, updateDTO);
+    public LabelDTO updateUser(@PathVariable Long id, @Valid @RequestBody LabelUpdateDTO updateDTO) {
+        return labelService.update(id, updateDTO);
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PreAuthorize("@userUtils.isCurrentUser(#id)")
     public void delete(@PathVariable long id) {
-        userService.delete(id);
+        labelService.delete(id);
     }
 }

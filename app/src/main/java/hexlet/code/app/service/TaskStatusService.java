@@ -1,26 +1,38 @@
 package hexlet.code.app.service;
 
-import hexlet.code.app.dto.*;
+import hexlet.code.app.dto.taskStatus.TaskStatusCreateDTO;
+import hexlet.code.app.dto.taskStatus.TaskStatusDTO;
+import hexlet.code.app.dto.taskStatus.TaskStatusUpdateDTO;
+import hexlet.code.app.exception.MethodNotAllowedException;
 import hexlet.code.app.exception.ResourceNotFoundException;
 import hexlet.code.app.mapper.TaskStatusMapper;
+import hexlet.code.app.repository.TaskRepository;
 import hexlet.code.app.repository.TaskStatusRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
+
+import static hexlet.code.app.utils.Utils.urlNormalize;
 
 @Service
+@AllArgsConstructor
 public class TaskStatusService {
-    @Autowired
     private TaskStatusRepository repository;
-    @Autowired
     private TaskStatusMapper mapper;
+    private TaskRepository taskRepository;
 
-    public List<TaskStatusDTO> getAll() {
-        var users = repository.findAll();
-        return users.stream()
-                .map(p -> mapper.map(p))
-                .toList();
+    public List<TaskStatusDTO> getAll(Map<String, String> allParams) {
+        Map<String, Object> params = urlNormalize(allParams);
+        var taskStatuses = repository.findAll(PageRequest.of((Integer) params.get("page"),
+                (Integer) params.get("perPage")));
+        return taskStatuses.map(mapper::map).toList();
+    }
+
+    public int count() {
+        return repository.countAllBy();
     }
 
     public TaskStatusDTO getById(long id) {
@@ -44,6 +56,9 @@ public class TaskStatusService {
     }
 
     public void delete(long id) {
+        if (taskRepository.existsTasksByTaskStatus_Id(id)) {
+            throw new MethodNotAllowedException("There are tasks wit status id " + id);
+        }
         repository.deleteById(id);
     }
 }

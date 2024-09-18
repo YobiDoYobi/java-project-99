@@ -1,10 +1,16 @@
 package hexlet.code.app.mapper;
 
-import hexlet.code.app.dto.UserCreateDTO;
-import hexlet.code.app.dto.UserDTO;
-import hexlet.code.app.dto.UserUpdateDTO;
+import hexlet.code.app.dto.user.UserCreateDTO;
+import hexlet.code.app.dto.user.UserDTO;
+import hexlet.code.app.dto.user.UserUpdateDTO;
 import hexlet.code.app.model.User;
-import org.mapstruct.*;
+import org.mapstruct.BeforeMapping;
+import org.mapstruct.Mapper;
+import org.mapstruct.MappingConstants;
+import org.mapstruct.MappingTarget;
+import org.mapstruct.NullValuePropertyMappingStrategy;
+import org.mapstruct.ReportingPolicy;
+import org.openapitools.jackson.nullable.JsonNullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -32,7 +38,8 @@ public abstract class UserMapper {
 
     @BeforeMapping
     public void encryptPassword(UserUpdateDTO data) {
-        var password = data.getPassword();
-        data.setPassword(passwordEncoder.encode(password));
+        String passwordStr = String.valueOf(data.getPassword().get());
+        String passwordEncoded = passwordEncoder.encode(passwordStr);
+        data.setPassword(JsonNullable.of(passwordEncoded));
     }
 }

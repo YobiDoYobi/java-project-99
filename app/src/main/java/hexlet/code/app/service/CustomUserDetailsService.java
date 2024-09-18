@@ -1,3 +1,4 @@
+/*
 package hexlet.code.app.service;
 
 import hexlet.code.app.repository.UserRepository;
@@ -50,4 +51,4 @@ public class CustomUserDetailsService implements UserDetailsManager {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'userExists'");
     }
-}
+}*/

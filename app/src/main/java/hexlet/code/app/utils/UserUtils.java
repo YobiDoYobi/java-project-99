@@ -3,13 +3,13 @@ package hexlet.code.app.utils;
 import hexlet.code.app.exception.ResourceNotFoundException;
 import hexlet.code.app.model.User;
 import hexlet.code.app.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 @Component
+@AllArgsConstructor
 public class UserUtils {
-    @Autowired
     private UserRepository userRepository;
 
     public User getCurrentUser() {

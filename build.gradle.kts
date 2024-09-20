@@ -11,7 +11,7 @@ plugins {
 }
 application { mainClass.set("hexlet.code.app.AppApplication") }
 
-group = "hexlet.code.app"
+group = "hexlet.code"
 version = "0.0.1-SNAPSHOT"
 
 configurations {

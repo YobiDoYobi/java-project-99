@@ -1,19 +1,21 @@
- .DEFAULT_GOAL := build-run
+.DEFAULT_GOAL := build-run
 
 clean:
-	make -C ./app clean
+	gradle clean
 
 lint:
-	make -C ./app lint
-
-test:
-	make -C ./app test
+	gradle checkstyleMain
+	gradle checkstyleTest
 
 build:
-	make -C ./app build
+	make clean
+	make lint
+	make test
 
-.PHONY: build
-
+test:
+	gradle test
 
 report:
-	make -C ./app report
+	gradle jacocoTestReport
+
+.PHONY: build

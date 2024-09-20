@@ -9,7 +9,7 @@ plugins {
 	id("io.freefair.lombok") version "8.6"
 	id("checkstyle")
 }
-application { mainClass.set("hexlet.code.app.AppApplication") }
+application { mainClass.set("hexlet.code.AppApplication") }
 
 group = "hexlet.code"
 version = "0.0.1-SNAPSHOT"

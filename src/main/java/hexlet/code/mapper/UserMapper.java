@@ -38,8 +38,10 @@ public abstract class UserMapper {
 
     @BeforeMapping
     public void encryptPassword(UserUpdateDTO data) {
-        String passwordStr = String.valueOf(data.getPassword().get());
-        String passwordEncoded = passwordEncoder.encode(passwordStr);
-        data.setPassword(JsonNullable.of(passwordEncoded));
+        if (data.getPassword() != null) {
+            String passwordStr = String.valueOf(data.getPassword().get());
+            String passwordEncoded = passwordEncoder.encode(passwordStr);
+            data.setPassword(JsonNullable.of(passwordEncoded));
+        }
     }
 }

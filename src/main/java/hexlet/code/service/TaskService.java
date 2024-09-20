@@ -44,7 +44,9 @@ public class TaskService {
     public TaskDTO create(TaskCreateDTO dto) {
         var task = mapper.map(dto);
         repository.save(task);
-        task.getAssignee().addTask(task);
+        if (task.getAssignee() != null) {
+            task.getAssignee().addTask(task);
+        }
         task.getTaskStatus().addTask(task);
         task.getLabels().stream()
                 .peek(l -> l.addTask(task));
@@ -59,19 +61,23 @@ public class TaskService {
         final var oldAssignee = task.getAssignee();
         mapper.update(dto, task);
         repository.save(task);
-
-        if (!oldAssignee.equals(task.getAssignee())) {
+        //обновляем дочки пользователей
+        if (oldAssignee != null && task.getAssignee() != null && !oldAssignee.equals(task.getAssignee())) {
             oldAssignee.removeTask(task);
-            if (task.getAssignee() != null) {
-                task.getAssignee().addTask(task);
-            }
+            task.getAssignee().addTask(task);
+        } else if (oldAssignee == null && task.getAssignee() != null) {
+            task.getAssignee().addTask(task);
+        } else if (oldAssignee != null) {
+            oldAssignee.removeTask(task);
         }
+        //обновляем дочки статусов
         if (!oldStatus.equals(task.getTaskStatus())) {
             oldStatus.removeTask(task);
             if (task.getTaskStatus() != null) {
                 task.getTaskStatus().addTask(task);
             }
         }
+        //обновляем метки
         oldLabels.stream() //старые отвязываем
                 .filter(l -> !task.getLabels().contains(l))
                 .peek(l -> l.removeTask(task));
@@ -80,7 +86,6 @@ public class TaskService {
                 .peek(l -> l.addTask(task));
         return mapper.map(task);
     }
-
 
     public void delete(long id) {
         var task = repository.findById(id).orElseThrow(

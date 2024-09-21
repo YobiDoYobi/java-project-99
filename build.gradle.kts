@@ -8,6 +8,8 @@ plugins {
 	id("io.spring.dependency-management") version "1.1.6"
 	id("io.freefair.lombok") version "8.6"
 	id("checkstyle")
+	id("org.springdoc.openapi-gradle-plugin") version "1.9.0"
+	id("io.sentry.jvm.gradle") version "4.11.0"
 }
 application { mainClass.set("hexlet.code.AppApplication") }
 
@@ -20,6 +22,24 @@ configurations {
 	}
 }
 
+buildscript {
+	repositories {
+		mavenCentral()
+	}
+}
+sentry {
+	// Generates a JVM (Java, Kotlin, etc.) source bundle and uploads your source code to Sentry.
+	// This enables source context, allowing you to see your source
+	// code as part of your stack traces in Sentry.
+	includeSourceContext = true
+	org = "home-z6t"
+	projectName = "java-spring-boot"
+	authToken = System.getenv("SENTRY_AUTH_TOKEN")
+}
+tasks.sentryBundleSourcesJava {
+	enabled = System.getenv("SENTRY_AUTH_TOKEN") != null
+}
+
 repositories {
 	mavenCentral()
 	maven { url = uri("https://repo.spring.io/milestone") }
@@ -28,7 +48,7 @@ repositories {
 
 dependencies {
 	implementation("org.mapstruct:mapstruct:1.5.5.Final")
-    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.3.0")
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0")
 	annotationProcessor("org.mapstruct:mapstruct-processor:1.5.5.Final")
 	implementation("org.openapitools:jackson-databind-nullable:0.2.6")
 	implementation("org.springframework.boot:spring-boot-starter-data-jdbc")
@@ -51,6 +71,8 @@ dependencies {
 	testImplementation("org.springframework.security:spring-security-test")
 	implementation("net.datafaker:datafaker:2.3.0")
 	implementation("org.instancio:instancio-junit:5.0.1")
+	implementation("io.sentry:sentry-spring-boot-starter:7.5.0")
+	implementation("io.sentry:sentry-spring-boot-starter-jakarta:7.5.0")
 }
 
 tasks.withType<Test> {
@@ -102,5 +124,3 @@ tasks.jacocoTestCoverageVerification {
 		}
 	}
 }
-
-

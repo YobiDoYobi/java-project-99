@@ -1,6 +1,7 @@
 package hexlet.code.config;
 
 import hexlet.code.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -10,11 +11,10 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
@@ -38,12 +38,19 @@ public class SecurityConfig {
         // По умолчанию все запрещено
         return http
                 .csrf(AbstractHttpConfigurer::disable)
+                /*.cors(AbstractHttpConfigurer::disable)
+                .logout(AbstractHttpConfigurer::disable)
+                .formLogin(AbstractHttpConfigurer::disable)
+                .headers(AbstractHttpConfigurer::disable)
+                .headers(headers -> headers
+                        .frameOptions(HeadersConfigurer.FrameOptionsConfig::disable))
+                .httpBasic(Customizer.withDefaults())*/
                 .authorizeHttpRequests(auth -> auth
-                        // Разрешаем доступ только к /api/login, чтобы аутентифицироваться и получить токен
                         .requestMatchers("/api/login").permitAll()
                         .requestMatchers("/").permitAll()
                         .requestMatchers("/index.html").permitAll()
-                        .requestMatchers("/assets/**").permitAll()
+                        .requestMatchers("/assets/**", "/v3/**", "/v3/api-docs/**").permitAll()
+                        .requestMatchers("/swagger-ui.html", "/swagger-ui/**", "/swagger-ui/index.html").permitAll()
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .oauth2ResourceServer((rs) -> rs.jwt((jwt) -> jwt.decoder(jwtDecoder)))

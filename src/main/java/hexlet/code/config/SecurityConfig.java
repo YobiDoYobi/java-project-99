@@ -1,7 +1,7 @@
 package hexlet.code.config;
 
 import hexlet.code.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -22,14 +22,10 @@ import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
+@AllArgsConstructor
 public class SecurityConfig {
-    @Autowired
     private JwtDecoder jwtDecoder;
-
-    @Autowired
     private PasswordEncoder passwordEncoder;
-
-    @Autowired
     private UserService userService;
 
     @Bean
@@ -38,18 +34,15 @@ public class SecurityConfig {
         // По умолчанию все запрещено
         return http
                 .csrf(AbstractHttpConfigurer::disable)
-                /*.cors(AbstractHttpConfigurer::disable)
-                .logout(AbstractHttpConfigurer::disable)
-                .formLogin(AbstractHttpConfigurer::disable)
-                .headers(AbstractHttpConfigurer::disable)
+                /*.headers(AbstractHttpConfigurer::disable)
                 .headers(headers -> headers
-                        .frameOptions(HeadersConfigurer.FrameOptionsConfig::disable))
-                .httpBasic(Customizer.withDefaults())*/
+                        .frameOptions(HeadersConfigurer.FrameOptionsConfig::disable))*/
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/login").permitAll()
                         .requestMatchers("/").permitAll()
                         .requestMatchers("/index.html").permitAll()
-                        .requestMatchers("/assets/**", "/v3/**", "/v3/api-docs/**").permitAll()
+                        .requestMatchers("/assets/**").permitAll()
+                        .requestMatchers("/v3/**", "/v3/api-docs/**").permitAll()
                         .requestMatchers("/swagger-ui.html", "/swagger-ui/**", "/swagger-ui/index.html").permitAll()
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

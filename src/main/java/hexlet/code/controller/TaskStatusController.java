@@ -1,8 +1,7 @@
 package hexlet.code.controller;
 
-import hexlet.code.dto.taskStatus.TaskStatusCreateDTO;
 import hexlet.code.dto.taskStatus.TaskStatusDTO;
-import hexlet.code.dto.taskStatus.TaskStatusUpdateDTO;
+import hexlet.code.dto.taskStatus.TaskStatusUpsertDTO;
 import hexlet.code.service.TaskStatusService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -42,13 +41,13 @@ public class TaskStatusController {
 
     @PostMapping("")
     @ResponseStatus(HttpStatus.CREATED)
-    public TaskStatusDTO create(@RequestBody TaskStatusCreateDTO dto) {
+    public TaskStatusDTO create(@RequestBody TaskStatusUpsertDTO dto) {
         return taskStatusService.create(dto);
     }
 
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public TaskStatusDTO update(@PathVariable long id, @RequestBody TaskStatusUpdateDTO dto) {
+    public TaskStatusDTO update(@PathVariable long id, @RequestBody TaskStatusUpsertDTO dto) {
         return taskStatusService.update(id, dto);
     }
 

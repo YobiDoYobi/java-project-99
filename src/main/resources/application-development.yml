@@ -11,4 +11,7 @@ spring:
   config:
     activate:
       on-profile: development
+springdoc:
+  swagger-ui:
+    path: "/swagger-ui.html"
 # END

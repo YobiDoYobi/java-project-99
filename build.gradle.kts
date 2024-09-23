@@ -4,11 +4,10 @@ import org.gradle.api.tasks.testing.logging.TestLogEvent
 plugins {
 	application
     jacoco
-	id("org.springframework.boot") version "3.4.0-SNAPSHOT"
+	id("org.springframework.boot") version "3.2.4"
 	id("io.spring.dependency-management") version "1.1.6"
 	id("io.freefair.lombok") version "8.6"
 	id("checkstyle")
-	id("org.springdoc.openapi-gradle-plugin") version "1.9.0"
 	id("io.sentry.jvm.gradle") version "4.11.0"
 }
 application { mainClass.set("hexlet.code.AppApplication") }
@@ -71,8 +70,8 @@ dependencies {
 	testImplementation("org.springframework.security:spring-security-test")
 	implementation("net.datafaker:datafaker:2.3.0")
 	implementation("org.instancio:instancio-junit:5.0.1")
-	implementation("io.sentry:sentry-spring-boot-starter:7.5.0")
-	implementation("io.sentry:sentry-spring-boot-starter-jakarta:7.5.0")
+	implementation("io.sentry:sentry-spring-boot-starter:7.14.0")
+	implementation("io.sentry:sentry-spring-boot-starter-jakarta:7.14.0")
 }
 
 tasks.withType<Test> {

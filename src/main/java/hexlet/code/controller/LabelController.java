@@ -1,8 +1,7 @@
 package hexlet.code.controller;
 
-import hexlet.code.dto.label.LabelCreateDTO;
 import hexlet.code.dto.label.LabelDTO;
-import hexlet.code.dto.label.LabelUpdateDTO;
+import hexlet.code.dto.label.LabelUpsertDTO;
 import hexlet.code.service.LabelService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -41,13 +40,13 @@ public class LabelController {
 
     @PostMapping(path = "")
     @ResponseStatus(HttpStatus.CREATED)
-    public LabelDTO create(@Valid @RequestBody LabelCreateDTO dto) {
+    public LabelDTO create(@Valid @RequestBody LabelUpsertDTO dto) {
         return labelService.create(dto);
     }
 
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public LabelDTO updateUser(@PathVariable Long id, @Valid @RequestBody LabelUpdateDTO updateDTO) {
+    public LabelDTO updateUser(@PathVariable Long id, @Valid @RequestBody LabelUpsertDTO updateDTO) {
         return labelService.update(id, updateDTO);
     }
 

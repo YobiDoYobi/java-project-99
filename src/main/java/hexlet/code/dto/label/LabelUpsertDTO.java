@@ -5,6 +5,6 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class LabelUpdateDTO {
+public class LabelUpsertDTO {
     private String name;
 }

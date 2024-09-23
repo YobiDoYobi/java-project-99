@@ -1,7 +1,7 @@
 package hexlet.code;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import hexlet.code.dto.task.TaskUpdateDTO;
+import hexlet.code.dto.task.TaskUpsertDTO;
 import hexlet.code.mapper.TaskMapper;
 import hexlet.code.model.Label;
 import hexlet.code.model.Task;
@@ -23,15 +23,11 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
-
-import java.nio.charset.StandardCharsets;
 
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
-import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -71,12 +67,6 @@ public class TasksControllerTest {
 
     @BeforeEach
     void setUp() {
-        mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
-                .defaultResponseCharacterEncoding(StandardCharsets.UTF_8)
-                .apply(springSecurity())
-                .build();
-
-        //following data is taken from application.yml
         testUser = userRepository.findByEmail("hexlet@example.com").get();
         testTaskStatus = taskStatusRepository.findBySlug("draft").get();
         testTaskStatus2 = taskStatusRepository.findBySlug("published").get();
@@ -103,7 +93,6 @@ public class TasksControllerTest {
         MvcResult result = mockMvc.perform(get("/api/tasks").with(jwt()))
                 .andExpect(status().isOk())
                 .andReturn();
-
         String body = result.getResponse().getContentAsString();
         assertThatJson(body).isArray().hasSize((int) count);
     }
@@ -113,7 +102,6 @@ public class TasksControllerTest {
         MvcResult result = mockMvc.perform(get("/api/tasks/{id}", testTask.getId()).with(jwt()))
                 .andExpect(status().isOk())
                 .andReturn();
-
         String body = result.getResponse().getContentAsString();
         assertThatJson(body).and(
                 v -> v.node("content").isEqualTo(testTask.getDescription()),
@@ -127,16 +115,13 @@ public class TasksControllerTest {
         newTask.setAssignee(testUser);
         newTask.setTaskStatus(testTaskStatus);
         newTask.addLabel(testLabel);
-
         var taskDTO = taskMapper.map(newTask);
-
         MvcResult result = mockMvc.perform(post("/api/tasks")
                         .with(jwt())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(taskDTO)))
                 .andExpect(status().isCreated())
                 .andReturn();
-
         String body = result.getResponse().getContentAsString();
         assertThatJson(body).and(
                 v -> v.node("content").isEqualTo(newTask.getDescription()),
@@ -148,19 +133,15 @@ public class TasksControllerTest {
     public void testUpdate() throws Exception {
         testTask.setTaskStatus(testTaskStatus2);
         testTask.setName("newName");
-        //testTask.setLabels(Set.of(testLabel2));
         testTask.addLabel(testLabel2);
         testTask.removeLabel(testLabel);
-        //System.out.println(testTask.getLabels().toString());
         var taskDTO = taskMapper.map(testTask);
-
         mockMvc.perform(put("/api/tasks/{id}", testTask.getId()).with(jwt())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(taskDTO)))
                 .andExpect(status().isOk());
 
         Task task = taskRepository.findById(testTask.getId()).get();
-        //System.out.println(task.getLabels().toString());
         assertThat(task.getTaskStatus()).isEqualTo(testTaskStatus2);
         assertThat(task.getName()).isEqualTo("newName");
         assertThat(task.getLabels()).containsOnly(testLabel2);
@@ -168,16 +149,13 @@ public class TasksControllerTest {
 
     @Test
     public void testPartialUpdate() throws Exception {
-        TaskUpdateDTO taskDTO = new TaskUpdateDTO();
+        TaskUpsertDTO taskDTO = new TaskUpsertDTO();
         taskDTO.setTitle(JsonNullable.of("new name"));
-
         mockMvc.perform(put("/api/tasks/{id}", testTask.getId()).with(jwt())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(taskDTO)))
                 .andExpect(status().isOk());
-
         Task task = taskRepository.findById(testTask.getId()).get();
-
         assertThat(task.getName()).isEqualTo("new name");
         assertThat(task.getDescription()).isEqualTo(testTask.getDescription());
     }

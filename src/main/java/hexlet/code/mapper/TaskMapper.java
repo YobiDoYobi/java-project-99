@@ -1,8 +1,7 @@
 package hexlet.code.mapper;
 
-import hexlet.code.dto.task.TaskCreateDTO;
 import hexlet.code.dto.task.TaskDTO;
-import hexlet.code.dto.task.TaskUpdateDTO;
+import hexlet.code.dto.task.TaskUpsertDTO;
 import hexlet.code.model.Task;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -23,7 +22,7 @@ public abstract class TaskMapper {
     @Mapping(target = "description", source = "content")
     @Mapping(target = "taskStatus", source = "status")
     @Mapping(target = "labels", source = "taskLabelIds")
-    public abstract Task map(TaskCreateDTO dto);
+    public abstract Task map(TaskUpsertDTO dto);
 
     @Mapping(target = "status", source = "taskStatus.slug")
     @Mapping(target = "title", source = "name")
@@ -37,5 +36,5 @@ public abstract class TaskMapper {
     @Mapping(target = "description", source = "content")
     @Mapping(target = "taskStatus", source = "status")
     @Mapping(target = "labels", source = "taskLabelIds")
-    public abstract void update(TaskUpdateDTO dto, @MappingTarget Task model);
+    public abstract void update(TaskUpsertDTO dto, @MappingTarget Task model);
 }

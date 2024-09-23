@@ -9,7 +9,7 @@ import java.util.Set;
 
 @Getter
 @Setter
-public class TaskUpdateDTO {
+public class TaskUpsertDTO {
     private JsonNullable<Integer> index;
     @JsonProperty("assignee_id")
     private JsonNullable<Long> assigneeId;

@@ -56,12 +56,10 @@ public class User implements UserDetails, BaseEntity {
 
     public void addTask(Task task) {
         tasks.add(task);
-        //task.setAssignee(this);
     }
 
     public void removeTask(Task task) {
         tasks.remove(task);
-        //task.setAssignee(null);
     }
 
     @Override

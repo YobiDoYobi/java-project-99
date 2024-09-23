@@ -15,15 +15,11 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
-
-import java.nio.charset.StandardCharsets;
 
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
-import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -50,11 +46,6 @@ public class LabelsControllerTest {
 
     @BeforeEach
     void setUp() {
-        mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
-                .defaultResponseCharacterEncoding(StandardCharsets.UTF_8)
-                .apply(springSecurity())
-                .build();
-
         testLabel = Instancio.of(modelGenerator.getLabelModel()).create();
         labelRepository.save(testLabel);
     }
@@ -64,7 +55,6 @@ public class LabelsControllerTest {
         MvcResult result = mockMvc.perform(get("/api/labels").with(jwt()))
                 .andExpect(status().isOk())
                 .andReturn();
-
         String body = result.getResponse().getContentAsString();
         assertThatJson(body).isArray();
     }
@@ -74,7 +64,6 @@ public class LabelsControllerTest {
         MvcResult result = mockMvc.perform(get("/api/labels/{id}", testLabel.getId()).with(jwt()))
                 .andExpect(status().isOk())
                 .andReturn();
-
         String body = result.getResponse().getContentAsString();
         assertThatJson(body).and(
                 v -> v.node("name").isEqualTo(testLabel.getName())
@@ -84,28 +73,22 @@ public class LabelsControllerTest {
     @Test
     public void testCreate() throws Exception {
         Label newLabel = Instancio.of(modelGenerator.getLabelModel()).create();
-
         mockMvc.perform(post("/api/labels").with(jwt())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(newLabel)))
                 .andExpect(status().isCreated());
-
         Label label = labelRepository.findByName(newLabel.getName()).get();
-
         assertThat(label).isNotNull();
     }
 
     @Test
     public void testUpdate() throws Exception {
         testLabel.setName("newName");
-
         mockMvc.perform(put("/api/labels/{id}", testLabel.getId()).with(jwt())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(testLabel)))
                 .andExpect(status().isOk());
-
         Label label = labelRepository.findById(testLabel.getId()).get();
-
         assertThat(label.getName()).isEqualTo(testLabel.getName());
     }
 
@@ -113,7 +96,6 @@ public class LabelsControllerTest {
     public void testDelete() throws Exception {
         mockMvc.perform(delete("/api/labels/{id}", testLabel.getId()).with(jwt()))
                 .andExpect(status().isNoContent());
-
         assertThat(labelRepository.existsById(testLabel.getId())).isEqualTo(false);
     }
 

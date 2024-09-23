@@ -1,9 +1,8 @@
 package hexlet.code.controller;
 
-import hexlet.code.dto.task.TaskCreateDTO;
 import hexlet.code.dto.task.TaskDTO;
 import hexlet.code.dto.task.TaskParamsDTO;
-import hexlet.code.dto.task.TaskUpdateDTO;
+import hexlet.code.dto.task.TaskUpsertDTO;
 import hexlet.code.service.TaskService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -42,13 +41,13 @@ public class TaskController {
 
     @PostMapping(path = "")
     @ResponseStatus(HttpStatus.CREATED)
-    public TaskDTO create(@Valid @RequestBody TaskCreateDTO dto) {
+    public TaskDTO create(@Valid @RequestBody TaskUpsertDTO dto) {
         return taskService.create(dto);
     }
 
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public TaskDTO update(@PathVariable Long id, @Valid @RequestBody TaskUpdateDTO updateDTO) {
+    public TaskDTO update(@PathVariable Long id, @Valid @RequestBody TaskUpsertDTO updateDTO) {
         return taskService.update(id, updateDTO);
     }
 

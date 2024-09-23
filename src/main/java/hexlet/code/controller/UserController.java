@@ -1,9 +1,8 @@
 package hexlet.code.controller;
 
 
-import hexlet.code.dto.user.UserCreateDTO;
 import hexlet.code.dto.user.UserDTO;
-import hexlet.code.dto.user.UserUpdateDTO;
+import hexlet.code.dto.user.UserUpsertDTO;
 import hexlet.code.service.UserService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -46,14 +45,14 @@ public class UserController {
 
     @PostMapping(path = "")
     @ResponseStatus(HttpStatus.CREATED)
-    public UserDTO create(@Valid @RequestBody UserCreateDTO userData) {
+    public UserDTO create(@Valid @RequestBody UserUpsertDTO userData) {
         return userService.create(userData);
     }
 
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("@userUtils.isCurrentUser(#id)")
-    public UserDTO updateUser(@PathVariable Long id, @Valid @RequestBody UserUpdateDTO updateDTO) {
+    public UserDTO updateUser(@PathVariable Long id, @Valid @RequestBody UserUpsertDTO updateDTO) {
         return userService.update(id, updateDTO);
     }
 

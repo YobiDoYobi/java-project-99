@@ -17,15 +17,11 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
-
-import java.nio.charset.StandardCharsets;
 
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
-import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -55,11 +51,6 @@ class UserControllerTests {
 
     @BeforeEach
     void setUp() {
-        mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
-                .defaultResponseCharacterEncoding(StandardCharsets.UTF_8)
-                .apply(springSecurity())
-                .build();
-
         testUser = Instancio.of(modelGenerator.getUserModel()).create();
         userRepository.save(testUser);
         token = jwt().jwt(builder -> builder.subject(testUser.getEmail()));
@@ -70,7 +61,6 @@ class UserControllerTests {
         MvcResult result = mockMvc.perform(get("/api/users").with(token))
                 .andExpect(status().isOk())
                 .andReturn();
-
         String body = result.getResponse().getContentAsString();
         assertThatJson(body).isArray();
     }
@@ -80,7 +70,6 @@ class UserControllerTests {
         MvcResult result = mockMvc.perform(get("/api/users/{id}", testUser.getId()).with(token))
                 .andExpect(status().isOk())
                 .andReturn();
-
         String body = result.getResponse().getContentAsString();
         assertThatJson(body).and(
                 v -> v.node("firstName").isEqualTo(testUser.getFirstName()),
